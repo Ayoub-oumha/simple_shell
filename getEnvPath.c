@@ -40,12 +40,12 @@ char *getValidPath(char *line)
 	struct stat envir;
 
 	if (stat(line, &envir) == 0)
-		return line;
+		return (line);
 	cmdLen = _strlen(line);
 	path = getEnv("PATH");
 	pathDup = strdup(path);
 	pathSplit = strtok(pathDup, ":");
-	while(pathSplit)
+	while (pathSplit)
 	{
 		splitLen = _strlen(pathSplit);
 		file_path = malloc(splitLen + cmdLen + 2);
@@ -67,10 +67,9 @@ char *getValidPath(char *line)
 		else
 		{
 			free(file_path);
-			pathSplit = strtok (NULL, ":");
+			pathSplit = strtok(NULL, ":");
 		}
 	}
 	free(pathDup);
 	return (NULL);
 }
-

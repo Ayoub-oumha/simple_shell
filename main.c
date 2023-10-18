@@ -30,6 +30,7 @@ int main(int ac, char **argv)
 	char *executeName = argv[0];
 	char ***commands;
 
+	(void) ac;
 	endCode = malloc(sizeof(int));
 	*endCode = EXIT_SUCCESS;
 	while (1)

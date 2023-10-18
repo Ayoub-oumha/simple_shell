@@ -26,8 +26,9 @@ void printEnv(int *endCode)
  * @executeName: name of executable file
  * @Perror: Perror
  * @line_number: line_number
+ * Return: end Code to exit
 */
-int exitProgram(char *inputCommand, char ***argv, char **validPath, 
+int exitProgram(char *inputCommand, char ***argv, char **validPath,
 	char *executeName, int Perror, int line_number)
 {
 	int code;
@@ -130,7 +131,7 @@ void runCmd(char *executeName, char *inputCommand, char ***argv, int *endCode)
 			if (_strcmp(validPath, EXIT) == 0)
 			{
 				*endCode = exitProgram(inputCommand, argv, argv[i], executeName,
-											*endCode, i+1);
+											*endCode, i + 1);
 			}
 			else if (_strcmp(validPath, ENVIREN) == 0)
 			{

@@ -80,8 +80,7 @@ char *_itos(int number)
 			s[0] = '-';
 			pos = -number;
 		}
-		do
-		{
+		do {
 			s[i] = '0' + (pos % 10);
 			pos /= 10;
 			i--;
