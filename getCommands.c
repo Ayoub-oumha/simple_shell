@@ -55,7 +55,7 @@ size_t getLineNumbers(char *CommandInput)
 
 /**
  * getWordsInColumn - get number of words
- * @input: line
+ * @line: line
  * @i: number of lines
  * Return: number of words
 */
