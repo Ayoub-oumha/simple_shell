@@ -48,4 +48,3 @@ int main(int ac, char **argv)
 	clearPointers(2, &commandLine, &argv);
 	return (*endCode);
 }
-
