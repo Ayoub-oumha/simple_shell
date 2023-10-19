@@ -82,7 +82,7 @@ int main(int ac, char **argv)
 	{
 		while (1)
 		{
-			putString("#cisfun$ ");
+			putString("$ ");
 			chars_count = getline(&commandLine, &inputSize, stdin);
 			if (chars_count == EOF)
 			{

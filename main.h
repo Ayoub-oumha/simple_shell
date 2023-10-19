@@ -53,7 +53,7 @@ void dynamicPrintError(enum ERROR_TYPE ERROR_TYPE, int argc, ...);
 void clearPointers(int argc, ...);
 void free_matrix(char **mat);
 void runCmd(char *executeName, char *inputCommand, char ***argv, int *endCode);
-int exitProgram(char *inputCommand, char ***argv, char **validPath, 
+int exitProgram(char *inputCommand, char ***argv, char **validPath,
 	char *executeName, int Perror, int line_number);
 void printEnv(int *endCode);
 char ***getCommands(char *commandLine);
