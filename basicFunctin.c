@@ -15,6 +15,22 @@ void freeTable(char **toFree)
 		free(*toFree++);
 	free(a);
 }
+/**
+ * custfree - custfree
+ * @poi: address
+ *
+ * Return: 1
+ */
+int custfree(void **poi)
+{
+	if (poi && *poi)
+	{
+		free(*poi);
+		*poi = NULL;
+		return (1);
+	}
+	return (0);
+}
 
 /**
  * clearShellVasrs - free shell variable
@@ -34,13 +50,13 @@ void clearShellVasrs(shellVarsStru *shellVars, int clearr)
 		if (shellVars->history)
 			free_listint_safe(&(shellVars->history));
 		if (!shellVars->cmdBuffe)
-			free(shellVars->arg);
+			if (shellVars->arg)
+				free(shellVars->arg);
 		if (shellVars->alias)
 			free_listint_safe(&(shellVars->alias));
 		freeTable(shellVars->environ);
 		shellVars->environ = NULL;
-		free(shellVars->cmdBuffe);
-		shellVars->cmdBuffe = NULL;
+		custfree((void **)shellVars->cmdBuffe);
 		if (shellVars->filedesiptor > 2)
 			close(shellVars->filedesiptor);
 		_putchar(EXITT);
