@@ -3,7 +3,7 @@
 ## Resources
 
 #### Read or watch:
-Project to be done in teams of 2 people (your team: Mohamed Abderrahmen Boulahia, Ayyoub Oumha)
+
 * [Unix shell](https://intranet.alxswe.com/rltoken/f0YU9TAhniMXWlSXtb64Yw)
 * [Thompson shell](https://intranet.alxswe.com/rltoken/7LJOp2qP7qHUcsOK2-F3qA)
 * [Ken Thompson](https://intranet.alxswe.com/rltoken/wTSu31ZP1f7fFTJFgRQC7w)
@@ -30,20 +30,21 @@ Project to be done in teams of 2 people (your team: Mohamed Abderrahmen Boulahia
 
 | Task | File |
 | ---- | ---- |
-| 0. Betty would be proud | [SOON](./) |
-| 1. Simple shell 0.1 | [SOON](./) |
-| 2. Simple shell 0.2 | [SOON](./) |
-| 3. Simple shell 0.3 | [SOON](./) |
-| 4. Simple shell 0.4 | [SOON](./) |
-| 5. Simple shell 1.0 | [SOON](./) |
-| 6. Simple shell 0.1.1 | [SOON](./) |
-| 7. Simple shell 0.2.1 | [SOON](./) |
-| 8. Simple shell 0.4.1 | [SOON](./) |
-| 9. setenv, unsetenv | [SOON](./) |
-| 10. cd | [SOON](./) |
-| 11. ; | [SOON](./) |
-| 12. && and || | [SOON](./) |
-| 13. alias | [SOON](./) |
-| 14. Variables | [SOON](./) |
-| 15. Comments | [SOON](./) |
-| 16. File as input | [SOON](./) |
+| 0. Betty would be proud | [Here](./) |
+| 1. Simple shell 0.1 | [Here](./) |
+| 2. Simple shell 0.2 | [Here](./) |
+| 3. Simple shell 0.3 | [Here](./) |
+| 4. Simple shell 0.4 | [Here](./) |
+| 5. Simple shell 1.0 | [Here](./) |
+| 6. Simple shell 0.1.1 | [Here](./) |
+| 7. Simple shell 0.2.1 | [Here](./) |
+| 8. Simple shell 0.4.1 | [Here](./) |
+| 9. setenv, unsetenv | [Here](./) |
+| 10. cd | [Here](./) |
+| 11. ; | [Here](./) |
+| 12. && and || | [Here](./) |
+| 13. alias | [Here](./) |
+| 14. Variables | [Here](./) |
+| 15. Comments | [Here](./) |
+| 16. File as input | [Here](./) |
+

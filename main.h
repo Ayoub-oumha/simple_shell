@@ -1,73 +1,159 @@
-#ifndef _simple_shell_
-#define _simple_shell_
+#ifndef _MAIN_H_
+#define _MAIN_H_
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <limits.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
-
-#define EXIT "exit"
-#define ENVIREN "env"
-#define LS "ls"
-#define spaceChar  " "
-#define newLineChar  "\n"
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
-#define EXIT_INVALID 2
-
 extern char **environ;
+/* split */
+#define NORM	0
+#define ORC		1
+#define ANDC		2
+#define CHNN	3
+/* split */
+#define OUTPUT_BUF_SIZE 1024
+#define EXITT -1
 
 /**
- * enum ERROR_TYPE - error types
- * @NO_PATH: no file found
- * @NOVALID_PAR: invalid parametre
- * @MAX_CODE: max number in error
- * Description: array of types
-*/
-typedef enum ERROR_TYPE
+ * struct stringLis - list of string
+ * @str: string
+ * @num: index
+ * @next: adress of next
+ */
+typedef struct stringLis
 {
-	NO_PATH = 0,
-	NOVALID_PAR = 1,
-	ERROR_MALLOC = 2,
-	MAX_CODE
-} ERROR_TYPE;
+	char *str;
+	int num;
+	struct stringLis *next;
+} list_t;
 
 /**
-* struct ERROR_TEXT - struct of error text
-* @type: type of error
-* @text: text
-* Description: struct of text of errror
-*/
-typedef struct ERROR_TEXT
+ *struct shellVars - variable of shell
+ *@arg: agrument
+ *@argv: an array of agruments
+ *@path: original path
+ *@executableName: executableName when gcc
+ *@environ: workable environ
+ *@cmdBuffe: adress to buffer
+ *@lenAgrument: number of agrument
+ *@errorCode: code of exit error
+ *@isNonVide: if there is lines
+ *@isEnvChanged: is env changed or nor
+ *@execStatues: exec statue
+ *@CMDORAND: type if and or extra
+ *@filedesiptor: filedesiptor
+ *@historyNLines: len of lines in hist
+ *@lCount: number
+ *@envLisst: list of env
+ *@history: node header of history
+ *@alias: alias list header
+ */
+typedef struct shellVars
 {
-	enum ERROR_TYPE type;
-	char *text;
-} ERROR_TEXT;
+	char *arg;
+	char **argv;
+	char *path;
+	char *executableName;
+	char **environ;
+	char **cmdBuffe;
+	int lenAgrument;
+	int errorCode;
+	int isNonVide;
+	int isEnvChanged;
+	int execStatues;
+	int CMDORAND;
+	int filedesiptor;
+	int historyNLines;
+	unsigned int lCount;
+	list_t *envLisst;
+	list_t *history;
+	list_t *alias;
+} shellVarsStru;
 
-void dynamicPrintError(enum ERROR_TYPE ERROR_TYPE, int argc, ...);
-void clearPointers(int argc, ...);
-void free_matrix(char **mat);
-void runCmd(char *executeName, char *inputCommand, char ***argv, int *endCode);
-int exitProgram(char *inputCommand, char ***argv, char **validPath,
-	char *executeName, int Perror, int line_number);
-void printEnv(int *endCode);
-char ***getCommands(char *commandLine);
-char *getValidPath(char *line);
-void freeAllMat(char ***mat);
-void freeMartArgV(char ***argv, int len);
-char *getEnv(char *varEn);
+#define INIT_VARS_SHELL \
+{NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	NULL, NULL, NULL}
+
+/**
+ *struct func_struct - contains a func_struct string ANDC related function
+ *@command: the func_struct command flag
+ *@func: the function
+ */
+
+typedef struct func_struct
+{
+	char *command;
+	int (*func)(shellVarsStru *);
+} func_node;
+
+int isEqualsOne(char c, char *check);
+int isInt(char *s);
+int exitFunc(shellVarsStru *shellVars);
+void handleBACKDIR(shellVarsStru *shellVars);
+int handleCD(shellVarsStru *shellVars);
+int printHistory(shellVarsStru *shellVars);
+int printAl(list_t *alias);
+int handleAliasCmd(shellVarsStru *shellVars);
+int PrintCurrentEnv(shellVarsStru *shellVars);
+char *getVariableOfEnv(shellVarsStru *shellVars, const char *name);
+int removeVariableOfEnv(shellVarsStru *shellVars);
+int setVarInEnv(shellVarsStru *shellVars);
+void showError(shellVarsStru *shellVars, char *errorString);
+int printErrorChar(char c);
+void printError(char *str);
+int writeToFd(char c, int file_dispotor);
+int writeStringToFd(char *str, int file_dispotor);
+char *_strncpy(char *dest, char *src, int n);
+char *_strncat(char *dest, char *src, int n);
+char *searchFirstOcc(char *s, char c);
+char *converNumber(long int number, int base);
+ssize_t readInput(char *buffer, size_t *i, shellVarsStru *shellVars);
+int getLIneCustom(char **c_buffer, size_t *sizze, shellVarsStru *shellVars);
+void newLineCmd(int sign);
+ssize_t getLineee(char **buffer, size_t *len, shellVarsStru *shellVars);
+ssize_t getLinee(shellVarsStru *shellVars);
+char *getShellH(shellVarsStru *shellVars);
+int addToHistFile(shellVarsStru *shellVars);
+char **getEnvironVars(shellVarsStru *shellVars);
+int setVarsEnvs(char *nameVar, char *valueVar, shellVarsStru *shellVars);
+list_t *add_node(list_t **head, const char *str, int num);
+list_t *add_node_end(list_t **head, const char *str, int n);
+int delete_nodeint_at_index(list_t **head, unsigned int index);
+size_t tortoiseAndHaret(const list_t *head);
+void free_listint_safe(list_t **h);
+size_t getLengthList(const list_t *h);
+char **listString(list_t *head);
+ssize_t get_node_index(list_t *head, list_t *currentNode);
+list_t *getNodeSta(list_t *head, char *start, char c);
+void freeTable(char **toFree);
+void clearShellVasrs(shellVarsStru *shellVars, int clearr);
+int isCommand(char *path);
+char *getPath(char *pathDir, char *cammand);
 char *_memset(char *s, char b, unsigned int n);
-char *_itos(int number);
-char *_strdup(char *str);
-int _atoi(char *s);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+int setCmdType(char *buffer, size_t *currentPos, shellVarsStru *ShVar);
+int setAliasVar(shellVarsStru *ShVar);
+void InitilizeShellVars(char **argvM, shellVarsStru *shellVars);
+int executeCMD(char **argvM, shellVarsStru *shellVars);
+int runUserCommand(shellVarsStru *shellVars);
+void handleFork(shellVarsStru *shellVars);
+void cmdINEnv(shellVarsStru *shellVars);
 int _strlen(char *s);
-char *_strcpy(char *dest, char *src);
 int _strcmp(char *s1, char *s2);
+char *findInS(const char *s, const char *toFind);
+char *_strcat(char *dest, char *src);
+char **strokCustom(char *str, char *d);
+char *_strcpy(char *dest, char *src);
+char *_strdup(const char *str);
+void putString(char *s);
+int _putchar(char c);
+int HlistBuild(char *buffer, int linecount, shellVarsStru *shellVars);
 
 #endif
 

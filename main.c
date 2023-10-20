@@ -1,101 +1,147 @@
 #include "main.h"
 
 /**
-* isInteractive - isInteractive
-* @ac: number of agruments
-* Return: true if interactive
-*/
-int isInteractive(int ac)
-{
-	if (!(!isatty(STDIN_FILENO) && ac == 1) || (!isatty(STDIN_FILENO) && ac > 1))
-	{
-		return (1);
-	}
-	else
-	{
-		return (0);
-	}
-}
-
-/**
- * putString - function prints a string
- * @s: tring to print
+ * handlErrorFile - handle error file
+ * @argvM: table of agrument
  */
 
-void putString(const char *s)
+void handlErrorFile(char **argvM)
 {
-	int x;
-
-	for (x = 0; s[x] != '\0'; x++)
+	if (errno == EACCES)
+		exit(126);
+	else if (errno == ENOENT)
 	{
-		write(1, &s[x], 1);
+		printError(argvM[0]);
+		printError(": 0: Can't open ");
+		printError(argvM[1]);
+		printErrorChar('\n');
+		printErrorChar(EXITT);
+		exit(127);
 	}
+
+}
+
+
+/**
+ * HlistBuild - add line to hist
+ * @buffer: buffer
+ * @linecount: line number of history
+ * @shellVars: struct of variable of custom shell
+ * Return: 0
+ */
+
+int HlistBuild(char *buffer, int linecount, shellVarsStru *shellVars)
+{
+	list_t *histNode = shellVars->history ? shellVars->history : NULL;
+
+	add_node_end(&histNode, buffer, linecount);
+	if (!shellVars->history)
+		shellVars->history = histNode;
+	return (0);
 }
 
 /**
-* NonI - non interactive
-* @executeName: executeName file
-* @endCode: final code of program
-*/
+ * Hreadd - second part of hread
+ * @shellVars: struct of variable of custom shell
+ * Return: history number of lines
+ */
 
-void NonI(char *executeName, int *endCode)
+int Hreadd(shellVarsStru *shellVars)
 {
-	char ***commands, *commandLine, buffer[1024];
-	ssize_t len;
+	list_t *head = shellVars->history;
+	int i = 0;
 
-	len = read(STDIN_FILENO, buffer, 1023);
-	if (len > 0)
+	while (shellVars->historyNLines-- >= 4096)
+		delete_nodeint_at_index(&(shellVars->history), 0);
+	while (head)
 	{
-		commandLine = malloc(len + 1);
-		if (commandLine != NULL)
-		{
-			buffer[len] = '\0';
-			_strcpy(commandLine, buffer);
-			commands = getCommands(commandLine);
-			if (commands != NULL && executeName != NULL)
-			{
-				runCmd(executeName, commandLine, commands, endCode);
-			}
-			free(commandLine);
-		}
+		head->num = i;
+		head = head->next;
+		i++;
 	}
+	return (shellVars->historyNLines = i);
 }
 
 /**
-* main - main function
-* @ac: number of agrument
-* @argv: table of agruments
-* Return: error
-*/
-int main(int ac, char **argv)
-{
-	int *endCode;
-	ssize_t chars_count;
-	char *commandLine = NULL;
-	size_t inputSize = 0;
-	char *executeName = argv[0];
-	char ***commands;
+ * Hread - read hist from file
+ * @shellVars: struct of variable of custom shell
+ * Return: nubmer hostiry ORC 0
+ */
 
-	endCode = malloc(sizeof(int));
-	*endCode = EXIT_SUCCESS;
-	if (isInteractive(ac))
-	{
-		while (1)
+int Hread(shellVarsStru *shellVars)
+{
+	struct stat fileState;
+	int i, endLine = 0, counter = 0;
+	ssize_t fileSize = 0, fileDisiptor, fileContent;
+	char *executableName, *buffer = NULL;
+
+	executableName = getShellH(shellVars);
+	if (!executableName)
+		return (0);
+	fileDisiptor = open(executableName, O_RDONLY);
+	free(executableName);
+	if (fileDisiptor == -1)
+		return (0);
+	if (!fstat(fileDisiptor, &fileState))
+		fileSize = fileState.st_size;
+	if (fileSize < 2)
+		return (0);
+	buffer = malloc(sizeof(char) * (fileSize + 1));
+	if (!buffer)
+		return (0);
+	fileContent = read(fileDisiptor, buffer, fileSize);
+	close(fileDisiptor);
+	buffer[fileSize] = 0;
+	if (fileContent <= 0)
+		return (free(buffer), 0);
+	for (i = 0; i < fileSize; i++)
+		if (buffer[i] == '\n')
 		{
-			putString("$ ");
-			chars_count = getline(&commandLine, &inputSize, stdin);
-			if (chars_count == EOF)
-			{
-				printf("Exit Shell\n");
-				exit(EXIT_SUCCESS);
-			}
-			commands = getCommands(commandLine);
-			if (commands != NULL)
-				runCmd(executeName, commandLine, commands, endCode);
+			buffer[i] = 0;
+			HlistBuild(buffer + endLine, counter++, shellVars);
+			endLine = i + 1;
 		}
-		clearPointers(2, &commandLine, &argv);
-		return (*endCode);
-	}
-	NonI(executeName, endCode);
-	return (*endCode);
+	if (endLine != i)
+		HlistBuild(buffer + endLine, counter++, shellVars);
+	free(buffer);
+	shellVars->historyNLines = counter;
+	Hreadd(shellVars);
+	return (shellVars->historyNLines);
 }
+
+/**
+ * main - start of the code
+ * @ac: number of agruments
+ * @argvM: table of agrument
+ * Return: exit code
+ */
+
+int main(int ac, char **argvM)
+{
+	shellVarsStru shellVars[] = { INIT_VARS_SHELL };
+	int fileDispitor = 2;
+	list_t *envLisst = NULL;
+	size_t i;
+
+	asm ("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r" (fileDispitor)
+		: "r" (fileDispitor));
+	if (ac == 2)
+	{
+		fileDispitor = open(argvM[1], O_RDONLY);
+		if (fileDispitor == -1)
+		{
+			handlErrorFile(argvM);
+			return (EXIT_FAILURE);
+		}
+		shellVars->filedesiptor = fileDispitor;
+	}
+	for (i = 0; environ[i]; i++)
+		add_node_end(&envLisst, environ[i], 0);
+	shellVars->envLisst = envLisst;
+	Hread(shellVars);
+	executeCMD(argvM, shellVars);
+	return (EXIT_SUCCESS);
+}
+
