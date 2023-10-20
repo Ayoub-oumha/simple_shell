@@ -172,7 +172,6 @@ void free_listint_safe(list_t **h)
 			if (temp->str)
 				free(temp->str);
 			free(temp);
-			ششش
 		}
 	}
 	*h = NULL;
