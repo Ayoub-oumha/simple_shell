@@ -158,10 +158,9 @@ void free_listint_safe(list_t **h)
 		{
 			temp = *h;
 			*h = (*h)->next;
-			if (temp->str)
+			if ((*h))
 				free(temp->str);
-			if (temp)
-				free(temp);
+			free(temp);
 		}
 	}
 	else
@@ -170,10 +169,9 @@ void free_listint_safe(list_t **h)
 		{
 			temp = *h;
 			*h = (*h)->next;
-			if (temp->str)
+			if ((*h))
 				free(temp->str);
-			if (temp)
-				free(temp);
+			free(temp);
 		}
 	}
 	*h = NULL;
