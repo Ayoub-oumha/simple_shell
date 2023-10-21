@@ -57,6 +57,7 @@ int executeCMD(char **argvM, shellVarsStru *shellVars)
 {
 	int builtin_ret = 0;
 	ssize_t r = 0;
+	int isInteractive = isatty(STDIN_FILENO) && shellVars->filedesiptor <= 2;
 
 	while (builtin_ret != -2 && r != -1)
 	{
@@ -64,7 +65,7 @@ int executeCMD(char **argvM, shellVarsStru *shellVars)
 		shellVars->argv = NULL;
 		shellVars->arg = NULL;
 		shellVars->path = NULL;
-		if (isatty(STDIN_FILENO) && shellVars->filedesiptor <= 2)
+		if (isInteractive)
 			putString("$ ");
 		printErrorChar(EXITT);
 		r = getLinee(shellVars);
@@ -75,14 +76,13 @@ int executeCMD(char **argvM, shellVarsStru *shellVars)
 			if (builtin_ret == -1)
 				cmdINEnv(shellVars);
 		}
-		else if (isatty(STDIN_FILENO) && shellVars->filedesiptor <= 2)
+		else if (isInteractive)
 			_putchar('\n');
 		clearShellVasrs(shellVars, 0);
 	}
 	addToHistFile(shellVars);
 	clearShellVasrs(shellVars, 1);
-	if (!isatty(STDIN_FILENO) && shellVars->filedesiptor <= 2 &&
-			shellVars->execStatues)
+	if (!isInteractive && shellVars->execStatues)
 		exit(shellVars->execStatues);
 	if (builtin_ret == -2)
 	{
@@ -171,6 +171,7 @@ void cmdINEnv(shellVarsStru *shellVars)
 {
 	char *path = NULL;
 	int i = 0, noDelim = 0;
+	int isInteractive = isatty(STDIN_FILENO) && shellVars->filedesiptor <= 2;
 
 	shellVars->path = shellVars->argv[0];
 	if (shellVars->isNonVide == 1)
@@ -191,8 +192,7 @@ void cmdINEnv(shellVarsStru *shellVars)
 	}
 	else
 	{
-		if (((isatty(STDIN_FILENO) && shellVars->filedesiptor <= 2) ||
-			getVariableOfEnv(shellVars, "PATH=")
+		if ((isInteractive || getVariableOfEnv(shellVars, "PATH=")
 			|| shellVars->argv[0][0] == '/') && isCommand(shellVars->argv[0]))
 			handleFork(shellVars);
 		else if (*(shellVars->arg) != '\n')
