@@ -14,13 +14,13 @@ char *getShellH(shellVarsStru *shellVars)
 	homeDir = getVariableOfEnv(shellVars, "HOME=");
 	if (!homeDir)
 		return (NULL);
-	buffer = malloc(sizeof(char) * (_strlen(homeDir) + 10));
+	buffer = malloc(sizeof(char) * (_strlen(homeDir) + _strlen(HIST_NAME) + 2));
 	if (!buffer)
 		return (NULL);
 	buffer[0] = 0;
 	_strcpy(buffer, homeDir);
 	_strcat(buffer, "/");
-	_strcat(buffer, ".AlxshellH");
+	_strcat(buffer, HIST_NAME);
 	return (buffer);
 }
 

@@ -14,12 +14,12 @@ extern char **environ;
 /* split */
 #define NORM	0
 #define ORC		1
-#define ANDC		2
+#define ANDC	2
 #define CHNN	3
 /* split */
 #define OUTPUT_BUF_SIZE 1024
 #define EXITT -1
-
+#define HIST_NAME	".AlxShelllH"
 /**
  * struct stringLis - list of string
  * @str: string
